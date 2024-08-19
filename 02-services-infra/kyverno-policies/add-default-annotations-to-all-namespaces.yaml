@@ -1,0 +1,23 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: add-default-annotations-to-all-namespaces
+spec:
+  validationFailureAction: Enforce
+  mutateExistingOnPolicyUpdate: true
+  rules:
+  - name: add-default-annotations-to-all-namespaces
+    match:
+      any:
+      - resources:
+          kinds:
+          - Namespace
+    mutate:
+      targets:
+      - apiVersion: v1
+        kind: Namespace
+      patchStrategicMerge:
+        metadata:
+          annotations:
+            +(linkerd.io/inject): enabled
+            +(config.linkerd.io/proxy-await): enabled

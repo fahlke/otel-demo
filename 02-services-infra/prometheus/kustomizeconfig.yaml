@@ -1,0 +1,6 @@
+nameReference:
+- kind: Secret
+  version: v1
+  fieldSpecs:
+  - path: spec/values/prometheus/prometheusSpec/thanos/objectStorageConfig/name
+    kind: HelmRelease

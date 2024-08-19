@@ -1,0 +1,9 @@
+type: s3
+config:
+  bucket: thanos-kube-prometheus-stack
+  endpoint: minio.thanos.svc
+  access_key: thanos-kube-prometheus-stack
+  secret_key: thanos-kube-prometheus-stack
+  # TLS disabled to make it easier in a dev environment with Minio
+  http_config:
+    insecure_skip_verify: true

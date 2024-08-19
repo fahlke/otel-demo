@@ -1,0 +1,72 @@
+---
+apiVersion: ctlptl.dev/v1alpha1
+kind: Registry
+name: ctlptl-registry
+port: 5005
+listenAddress: 127.0.0.1
+
+---
+apiVersion: ctlptl.dev/v1alpha1
+kind: Cluster
+product: kind
+registry: ctlptl-registry
+# Kind 0.23.0 supports Kubernetes v1.30.0 by default,
+# see https://github.com/kubernetes-sigs/kind/releases/tag/v0.23.0 
+kubernetesVersion: v1.30.0
+kindV1Alpha4Cluster:
+  name: kind
+  networking:
+    disableDefaultCNI: true
+    kubeProxyMode: none
+    podSubnet: "10.0.0.0/16"
+    serviceSubnet: "10.1.0.0/16"
+  nodes:
+  - role: control-plane
+    image: kindest/node:v1.30.0@sha256:047357ac0cfea04663786a612ba1eaba9702bef25227a794b52890dd8bcd692e
+    kubeadmConfigPatches:
+    - |
+      kind: InitConfiguration
+      nodeRegistration:
+        kubeletExtraArgs:
+          # https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/#options
+          node-labels: "ingress-ready=true,topology.kubernetes.io/region=eu-west-1,topology.kubernetes.io/zone=eu-west-1a"
+          system-reserved: "memory=3Gi,cpu=1"
+    extraPortMappings:
+    # Kong ingress for HTTP
+    - containerPort: 32080
+      hostPort: 80
+      protocol: TCP
+    # Kong ingress for HTTP over TLS
+    - containerPort: 32443
+      hostPort: 443
+      protocol: TCP
+  - role: worker
+    image: kindest/node:v1.30.0@sha256:047357ac0cfea04663786a612ba1eaba9702bef25227a794b52890dd8bcd692e
+    kubeadmConfigPatches:
+    - |
+      kind: JoinConfiguration
+      nodeRegistration:
+        kubeletExtraArgs:
+          # https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/#options
+          node-labels: "topology.kubernetes.io/region=eu-west-1,topology.kubernetes.io/zone=eu-west-1a"
+          system-reserved: "memory=7Gi,cpu=2"
+  - role: worker
+    image: kindest/node:v1.30.0@sha256:047357ac0cfea04663786a612ba1eaba9702bef25227a794b52890dd8bcd692e
+    kubeadmConfigPatches:
+    - |
+      kind: JoinConfiguration
+      nodeRegistration:
+        kubeletExtraArgs:
+          # https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/#options
+          node-labels: "topology.kubernetes.io/region=eu-west-1,topology.kubernetes.io/zone=eu-west-1b"
+          system-reserved: "memory=7Gi,cpu=2"
+  - role: worker
+    image: kindest/node:v1.30.0@sha256:047357ac0cfea04663786a612ba1eaba9702bef25227a794b52890dd8bcd692e
+    kubeadmConfigPatches:
+    - |
+      kind: JoinConfiguration
+      nodeRegistration:
+        kubeletExtraArgs:
+          # https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/#options
+          node-labels: "topology.kubernetes.io/region=eu-west-1,topology.kubernetes.io/zone=eu-west-1c"
+          system-reserved: "memory=7Gi,cpu=2"

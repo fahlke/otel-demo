@@ -1,0 +1,27 @@
+apiVersion: skaffold/v2beta28
+kind: Config
+metadata:
+  name: kind
+deploy:
+  kustomize:
+    paths:
+    - k8s/base/local-path-provisioner
+    - k8s/base/flux
+  helm:
+    releases:
+    - name: cilium
+      repo: https://helm.cilium.io/
+      remoteChart: cilium
+      version: 1.15.6
+      namespace: kube-system
+      upgradeOnChange: true
+      setValues:
+        # https://github.com/cilium/cilium/blob/v1.15.6/install/kubernetes/cilium/values.yaml
+        logOptions.format: json
+        kubeProxyReplacement: strict
+        k8sServiceHost: kind-control-plane
+        k8sServicePort: 6443
+        containerRuntime.integration: containerd
+        operator.rollOutPods: true
+        operator.replicas: 1
+        socketLB.hostNamespaceOnly: true

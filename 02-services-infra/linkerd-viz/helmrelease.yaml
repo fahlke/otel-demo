@@ -1,0 +1,28 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: linkerd-viz
+spec:
+  releaseName: linkerd-viz
+  chart:
+    spec:
+      chart: linkerd-viz
+      sourceRef:
+        kind: HelmRepository
+        name: linkerd
+        namespace: linkerd
+      version: 30.12.11
+  dependsOn:
+  - name: prometheus
+    namespace: prometheus
+  - name: linkerd-crds
+    namespace: linkerd
+  interval: 1h0m0s
+  # https://github.com/linkerd/linkerd2/blob/stable-2.14.10/viz/charts/linkerd-viz/values.yaml
+  values:
+    prometheusUrl: http://prometheus-kube-prometheus-prometheus.prometheus.svc.cluster.local:9090
+    prometheus:
+      enabled: false
+    grafana:
+      externalUrl: http://localhost:3000/
+    defaultLogFormat: json

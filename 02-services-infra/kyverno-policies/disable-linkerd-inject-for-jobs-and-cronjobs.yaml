@@ -1,0 +1,42 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: disable-linkerd-inject-for-jobs-and-cronjobs
+spec:
+  validationFailureAction: enforce
+  mutateExistingOnPolicyUpdate: true
+  rules:
+  - name: jobs
+    match:
+      any:
+      - resources:
+          kinds:
+          - Job
+    mutate:
+      targets:
+      - apiVersion: v1
+        kind: Job
+      patchStrategicMerge:
+        spec:
+          template:
+            metadata:
+              annotations:
+                linkerd.io/inject: disabled
+  - name: cronjobs
+    match:
+      any:
+      - resources:
+          kinds:
+          - CronJob
+    mutate:
+      targets:
+      - apiVersion: v1
+        kind: CronJob
+      patchStrategicMerge:
+        spec:
+          jobTemplate:
+            spec:
+              template:
+                metadata:
+                  annotations:
+                    linkerd.io/inject: disabled

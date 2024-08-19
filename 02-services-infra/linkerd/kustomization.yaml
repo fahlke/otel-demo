@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- helmrelease.yaml
+- bundle-linkerd-identity-trust-roots.yaml
+- certificate-linkerd-identity-issuer.yaml
+- certificate-linkerd-trust-anchor.yaml
+- clusterissuer-linkerd-self-signed-issuer.yaml
+- clusterissuer-linkerd-trust-anchor.yaml

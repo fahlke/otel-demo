@@ -1,0 +1,22 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: add-default-labels-to-all-namespaces
+spec:
+  validationFailureAction: Enforce
+  mutateExistingOnPolicyUpdate: true
+  rules:
+  - name: add-default-labels-to-all-namespaces
+    match:
+      any:
+      - resources:
+          kinds:
+          - Namespace
+    mutate:
+      targets:
+      - apiVersion: v1
+        kind: Namespace
+      patchStrategicMerge:
+        metadata:
+          labels:
+            +(prometheus.io/namespace.enabled): "yes"

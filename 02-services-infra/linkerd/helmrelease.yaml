@@ -1,0 +1,43 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: linkerd-control-plane
+  namespace: linkerd
+spec:
+  releaseName: linkerd-control-plane
+  chart:
+    spec:
+      chart: linkerd-control-plane
+      sourceRef:
+        kind: HelmRepository
+        name: linkerd
+        namespace: linkerd
+      version: 1.16.4
+  dependsOn:
+  - name: prometheus
+    namespace: prometheus
+  - name: linkerd-crds
+    namespace: linkerd
+  - name: cert-manager
+    namespace: cert-manager
+  - name: trust-manager
+    namespace: cert-manager
+  interval: 1h0m0s
+  # https://github.com/linkerd/linkerd2/blob/stable-2.14.3/charts/linkerd-control-plane/values.yaml
+  values:
+    controllerLogFormat: json
+    priorityClassName: system-cluster-critical
+    proxy:
+      logFormat: json
+    proxyInit:
+      logFormat: json
+    networkValidator:
+      logFormat: json
+    identity:
+      externalCA: true
+      issuer:
+        scheme: kubernetes.io/tls
+    podMonitor:
+      enabled: true
+    # By default, some namespaces are excluded.
+    # See: https://github.com/linkerd/linkerd2/blob/stable-2.14.3/charts/linkerd-control-plane/values.yaml#L359

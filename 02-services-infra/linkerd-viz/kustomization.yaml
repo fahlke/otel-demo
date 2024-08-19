@@ -1,0 +1,38 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: linkerd-viz
+
+resources:
+- helmrelease.yaml
+- namespace.yaml
+
+# Additional dashboards for Linkerd-Viz
+# ref: https://linkerd.io/2.13/tasks/grafana/#install-grafana
+# ref: https://grafana.com/orgs/linkerd/dashboards
+configMapGenerator:
+- name: linkerd-viz-dashboards
+  namespace: linkerd-viz
+  options:
+    labels:
+      grafana_dashboard: "1"
+  # until the PR (https://github.com/linkerd/linkerd2/pull/11017) is merged, the dashboards from the main branch are used
+#  files:
+#  - authority.json=https://raw.githubusercontent.com/linkerd/linkerd2/main/grafana/dashboards/authority.json
+#  - cronjob.json=https://raw.githubusercontent.com/linkerd/linkerd2/main/grafana/dashboards/cronjob.json
+#  - daemonset.json=https://raw.githubusercontent.com/linkerd/linkerd2/main/grafana/dashboards/daemonset.json
+#  - deployment.json=https://raw.githubusercontent.com/linkerd/linkerd2/main/grafana/dashboards/deployment.json
+#  - health.json=https://raw.githubusercontent.com/linkerd/linkerd2/main/grafana/dashboards/health.json
+#  - job.json=https://raw.githubusercontent.com/linkerd/linkerd2/main/grafana/dashboards/job.json
+#  - kubernetes.json=https://raw.githubusercontent.com/linkerd/linkerd2/main/grafana/dashboards/kubernetes.json
+#  - multicluster.json=https://raw.githubusercontent.com/linkerd/linkerd2/main/grafana/dashboards/multicluster.json
+#  - namespace.json=https://raw.githubusercontent.com/linkerd/linkerd2/main/grafana/dashboards/namespace.json
+#  - pod.json=https://raw.githubusercontent.com/linkerd/linkerd2/main/grafana/dashboards/pod.json
+#  - prometheus-2-stats.json=https://raw.githubusercontent.com/linkerd/linkerd2/main/grafana/dashboards/prometheus-2-stats.json
+#  - prometheus-benchmark.json=https://raw.githubusercontent.com/linkerd/linkerd2/main/grafana/dashboards/prometheus-benchmark.json
+#  - replicaset.json=https://raw.githubusercontent.com/linkerd/linkerd2/main/grafana/dashboards/replicaset.json
+#  - replicationcontroller.json=https://raw.githubusercontent.com/linkerd/linkerd2/main/grafana/dashboards/replicationcontroller.json
+#  - route.json=https://raw.githubusercontent.com/linkerd/linkerd2/main/grafana/dashboards/route.json
+#  - service.json=https://raw.githubusercontent.com/linkerd/linkerd2/main/grafana/dashboards/service.json
+#  - statefulset.json=https://raw.githubusercontent.com/linkerd/linkerd2/main/grafana/dashboards/statefulset.json
+#  - top-line.json=https://raw.githubusercontent.com/linkerd/linkerd2/main/grafana/dashboards/top-line.json
